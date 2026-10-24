@@ -51,3 +51,15 @@ Roofline Relay/
 ## Development & Version Control
 
 All development adheres strictly to the version control protocols defined in [`GIT_WORKFLOW.md`](file:///c:/Users/saipa/OneDrive/Desktop/Roofline%20Relay/GIT_WORKFLOW.md).
+
+---
+
+## Contributors & Collaborators
+
+| Member | Role | GitHub Profile |
+| :--- | :--- | :--- |
+| **Pavan Kumar Dasari** | Repository Owner & Lead Developer | [@pavankumar9d-rgb](https://github.com/pavankumar9d-rgb) |
+| **Preethi Kumari** | Project Collaborator | [@preethikumari934-TCTK](https://github.com/preethikumari934-TCTK) |
+
+> **Note:** Collaborator status reflects confirmed GitHub repository access and team participation. Commit attribution adheres to the recorded Git revision history.
+
