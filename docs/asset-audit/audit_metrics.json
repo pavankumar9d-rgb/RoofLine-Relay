@@ -1,0 +1,262 @@
+[
+  {
+    "id": "AUDIT_MDL_01",
+    "original_file": "Meshy_AI_Urban_Scout_1023083417_texture.glb",
+    "original_path": "C:\\Users\\saipa\\OneDrive\\Desktop\\Roofline Relay\\docs\\art\\3d-reference-library\\01_characters\\player_courier\\female\\Meshy_AI_Urban_Scout_1023083417_texture.glb",
+    "file_size": 6396788,
+    "format": ".glb",
+    "preview_path": "docs\\asset-audit\\previews\\MODEL_01_Meshy_AI_Urban_Scout_102_preview.png",
+    "import_success": true,
+    "error": null,
+    "mesh_count": 1,
+    "vertex_count": 38165,
+    "triangle_count": 65568,
+    "dimensions": [
+      1.085,
+      0.353,
+      1.9
+    ],
+    "armature_count": 0,
+    "bone_count": 0,
+    "animation_count": 0,
+    "material_count": 1,
+    "materials": [
+      "Material_0"
+    ],
+    "texture_count": 3
+  },
+  {
+    "id": "AUDIT_MDL_02",
+    "original_file": "Meshy_AI_Character_output.glb",
+    "original_path": "C:\\Users\\saipa\\OneDrive\\Desktop\\Roofline Relay\\docs\\art\\3d-reference-library\\01_characters\\player_courier\\male\\Meshy_AI_Character_output.glb",
+    "file_size": 7937352,
+    "format": ".glb",
+    "preview_path": "docs\\asset-audit\\previews\\MODEL_02_Meshy_AI_Character_outpu_preview.png",
+    "import_success": true,
+    "error": null,
+    "mesh_count": 2,
+    "vertex_count": 50901,
+    "triangle_count": 89070,
+    "dimensions": [
+      1.902,
+      2.0,
+      2.7
+    ],
+    "armature_count": 1,
+    "bone_count": 29,
+    "animation_count": 0,
+    "material_count": 1,
+    "materials": [
+      "Material_0"
+    ],
+    "texture_count": 3
+  },
+  {
+    "id": "AUDIT_MDL_03",
+    "original_file": "Meshy_AI_Urban_Recon_Pilot_1023084741_texture.glb",
+    "original_path": "C:\\Users\\saipa\\OneDrive\\Desktop\\Roofline Relay\\docs\\art\\3d-reference-library\\01_characters\\player_courier\\male\\Meshy_AI_Urban_Recon_Pilot_1023084741_texture.glb",
+    "file_size": 6426896,
+    "format": ".glb",
+    "preview_path": "docs\\asset-audit\\previews\\MODEL_03_Meshy_AI_Urban_Recon_Pil_preview.png",
+    "import_success": true,
+    "error": null,
+    "mesh_count": 1,
+    "vertex_count": 37362,
+    "triangle_count": 64062,
+    "dimensions": [
+      1.0,
+      0.358,
+      1.899
+    ],
+    "armature_count": 0,
+    "bone_count": 0,
+    "animation_count": 0,
+    "material_count": 1,
+    "materials": [
+      "Material_0"
+    ],
+    "texture_count": 3
+  },
+  {
+    "id": "AUDIT_MDL_04",
+    "original_file": "Meshy_AI_Urban_Sentinel_1023084910_texture.glb",
+    "original_path": "C:\\Users\\saipa\\OneDrive\\Desktop\\Roofline Relay\\docs\\art\\3d-reference-library\\01_characters\\player_courier\\male\\Meshy_AI_Urban_Sentinel_1023084910_texture.glb",
+    "file_size": 7888460,
+    "format": ".glb",
+    "preview_path": "docs\\asset-audit\\previews\\MODEL_04_Meshy_AI_Urban_Sentinel__preview.png",
+    "import_success": true,
+    "error": null,
+    "mesh_count": 1,
+    "vertex_count": 59238,
+    "triangle_count": 104700,
+    "dimensions": [
+      0.679,
+      1.131,
+      1.897
+    ],
+    "armature_count": 0,
+    "bone_count": 0,
+    "animation_count": 0,
+    "material_count": 1,
+    "materials": [
+      "Material_0"
+    ],
+    "texture_count": 3
+  },
+  {
+    "id": "AUDIT_MDL_05",
+    "original_file": "Meshy_AI_Sentinel_Hovercraft_1023085244_texture.glb",
+    "original_path": "C:\\Users\\saipa\\OneDrive\\Desktop\\Roofline Relay\\docs\\art\\3d-reference-library\\01_characters\\security_drone\\Meshy_AI_Sentinel_Hovercraft_1023085244_texture.glb",
+    "file_size": 16659612,
+    "format": ".glb",
+    "preview_path": "docs\\asset-audit\\previews\\MODEL_05_Meshy_AI_Sentinel_Hoverc_preview.png",
+    "import_success": true,
+    "error": null,
+    "mesh_count": 1,
+    "vertex_count": 203552,
+    "triangle_count": 363278,
+    "dimensions": [
+      1.633,
+      1.898,
+      0.812
+    ],
+    "armature_count": 0,
+    "bone_count": 0,
+    "animation_count": 0,
+    "material_count": 1,
+    "materials": [
+      "Material_0"
+    ],
+    "texture_count": 3
+  },
+  {
+    "id": "AUDIT_MDL_06",
+    "original_file": "concrete block 3d model.glb",
+    "original_path": "C:\\Users\\saipa\\OneDrive\\Desktop\\Roofline Relay\\docs\\art\\3d-reference-library\\03_parkour_environment\\parapets_and_ledges\\concrete block 3d model.glb",
+    "file_size": 20757932,
+    "format": ".glb",
+    "preview_path": "docs\\asset-audit\\previews\\MODEL_06_concrete block 3d model_preview.png",
+    "import_success": true,
+    "error": null,
+    "mesh_count": 1,
+    "vertex_count": 261340,
+    "triangle_count": 501880,
+    "dimensions": [
+      1.0,
+      0.334,
+      0.631
+    ],
+    "armature_count": 0,
+    "bone_count": 0,
+    "animation_count": 0,
+    "material_count": 1,
+    "materials": [
+      "tripo_material_7e9958c5-e54a-4b2a-951b-264258f38bb9"
+    ],
+    "texture_count": 3
+  },
+  {
+    "id": "AUDIT_MDL_07",
+    "original_file": "Meshy_AI_Industrial_HVAC_Unit_1023085629_texture.glb",
+    "original_path": "C:\\Users\\saipa\\OneDrive\\Desktop\\Roofline Relay\\docs\\art\\3d-reference-library\\04_rooftop_props\\hvac_and_vents\\Meshy_AI_Industrial_HVAC_Unit_1023085629_texture.glb",
+    "file_size": 22329316,
+    "format": ".glb",
+    "preview_path": "docs\\asset-audit\\previews\\MODEL_07_Meshy_AI_Industrial_HVAC_preview.png",
+    "import_success": true,
+    "error": null,
+    "mesh_count": 1,
+    "vertex_count": 267450,
+    "triangle_count": 469522,
+    "dimensions": [
+      1.899,
+      1.874,
+      1.265
+    ],
+    "armature_count": 0,
+    "bone_count": 0,
+    "animation_count": 0,
+    "material_count": 1,
+    "materials": [
+      "Material_0"
+    ],
+    "texture_count": 3
+  },
+  {
+    "id": "AUDIT_MDL_08",
+    "original_file": "3fb1d42b-5489-4d7e-8195-171d0624493a_0.glb",
+    "original_path": "C:\\Users\\saipa\\OneDrive\\Desktop\\Roofline Relay\\docs\\art\\3d-reference-library\\05_gameplay_assets\\courier_package\\3fb1d42b-5489-4d7e-8195-171d0624493a_0.glb",
+    "file_size": 64097136,
+    "format": ".glb",
+    "preview_path": "docs\\asset-audit\\previews\\MODEL_08_3fb1d42b-5489-4d7e-8195-_preview.png",
+    "import_success": true,
+    "error": null,
+    "mesh_count": 1,
+    "vertex_count": 1014972,
+    "triangle_count": 1915192,
+    "dimensions": [
+      0.74,
+      0.98,
+      0.536
+    ],
+    "armature_count": 0,
+    "bone_count": 0,
+    "animation_count": 0,
+    "material_count": 1,
+    "materials": [
+      "tripo_material_cb08c0e1-e0a7-4aa8-9cec-0195cd24d97c"
+    ],
+    "texture_count": 1
+  },
+  {
+    "id": "AUDIT_MDL_09",
+    "original_file": "Meshy_AI_Sentinel_Spire_1023091041_texture.glb",
+    "original_path": "C:\\Users\\saipa\\OneDrive\\Desktop\\Roofline Relay\\docs\\art\\3d-reference-library\\05_gameplay_assets\\relay_beacon\\Meshy_AI_Sentinel_Spire_1023091041_texture.glb",
+    "file_size": 13995560,
+    "format": ".glb",
+    "preview_path": "docs\\asset-audit\\previews\\MODEL_09_Meshy_AI_Sentinel_Spire__preview.png",
+    "import_success": true,
+    "error": null,
+    "mesh_count": 1,
+    "vertex_count": 123822,
+    "triangle_count": 209988,
+    "dimensions": [
+      0.942,
+      0.942,
+      1.9
+    ],
+    "armature_count": 0,
+    "bone_count": 0,
+    "animation_count": 0,
+    "material_count": 1,
+    "materials": [
+      "Material_0"
+    ],
+    "texture_count": 3
+  },
+  {
+    "id": "AUDIT_MDL_10",
+    "original_file": "Meshy_AI_Industrial_Control_Co_1023091223_texture.glb",
+    "original_path": "C:\\Users\\saipa\\OneDrive\\Desktop\\Roofline Relay\\docs\\art\\3d-reference-library\\05_gameplay_assets\\relay_console\\Meshy_AI_Industrial_Control_Co_1023091223_texture.glb",
+    "file_size": 9820248,
+    "format": ".glb",
+    "preview_path": "docs\\asset-audit\\previews\\MODEL_10_Meshy_AI_Industrial_Cont_preview.png",
+    "import_success": true,
+    "error": null,
+    "mesh_count": 1,
+    "vertex_count": 88906,
+    "triangle_count": 158334,
+    "dimensions": [
+      1.0,
+      1.023,
+      1.899
+    ],
+    "armature_count": 0,
+    "bone_count": 0,
+    "animation_count": 0,
+    "material_count": 1,
+    "materials": [
+      "Material_0"
+    ],
+    "texture_count": 3
+  }
+]
