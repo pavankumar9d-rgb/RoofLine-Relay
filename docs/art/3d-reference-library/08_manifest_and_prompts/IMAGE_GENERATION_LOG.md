@@ -258,3 +258,14 @@
 - **Model Conversion Staging:** 8 prop images copied to `C:\Users\saipa\Downloads\images to glb\` along with `CONVERSION_CHECKLIST.txt`.
 - **Status:** All 13 images saved as verified PNGs on disk. Total verified library count reaches 48/51 (94.1%).
 - **Quota Pause:** Encountered HTTP 429 at asset 14 (`MAT_RUBBER_01`) with reset timestamp scheduled in ~4h54m. 3 material references remain pending.
+
+## Batch 5 — Final Material References & Environment Vistas (2026-10-24)
+- **Generated Assets (6):**
+  - `MAT_RUBBER_01` -> `06_material_references/fabrics_and_emissives/mat_grip_rubber_input.png`
+  - `MAT_STEEL_01` -> `06_material_references/metals_and_hardware/mat_brushed_steel_input.png`
+  - `MAT_AMBER_01` -> `06_material_references/fabrics_and_emissives/mat_amber_emissive_input.png`
+  - `ENV_CONCEPT_02` -> `07_environment_concepts/env_rooftop_skyline_atmosphere.png`
+  - `ENV_CONCEPT_03` -> `07_environment_concepts/env_relay_checkpoint_environment.png`
+  - `ENV_CONCEPT_04` -> `07_environment_concepts/env_rooftop_access_service_area.png`
+- **Milestone Achieved:** 100% of all required 3D asset reference images and material studies are now complete and verified on disk!
+- **Total Library Size:** 54 tracked assets, 62 verified PNG files (~76 MB). Zero pending items remaining.
