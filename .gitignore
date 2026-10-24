@@ -65,16 +65,18 @@ $RECYCLE.BIN/
 *.bak
 
 # ------------------------------------------------------------------------------
-# Unity Engine Temporary, Cache & Build Directories
+# Unity Engine Temporary, Cache & Build Directories (Recursive)
 # ------------------------------------------------------------------------------
-/[Ll]ibrary/
-/[Tt]emp/
-/[Oo]bj/
-/[Bb]uild/
-/[Bb]uilds/
-/[Ll]ogs/
-/[Uu]ser[Ss]ettings/
-/[Mm]emoryCaptures/
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+[Mm]emoryCaptures/
+[Aa]sset[Cc]ache/
+[Rr]ecordings/
 sysinfo.txt
 *.apk
 *.aab
@@ -84,6 +86,7 @@ sysinfo.txt
 *.csproj
 *.unityproj
 *.sln
+*.slnx
 *.tmp
 *.pdb
 *.mdb
