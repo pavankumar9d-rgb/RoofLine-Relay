@@ -418,6 +418,16 @@ namespace RooflineRelay.Character
             _characterController.enabled = true;
             _animator.SetTrigger(HardLandingParam);
 
+            // Snap camera immediately to prevent dragging from beneath the floor
+            if (_cameraTransform != null)
+            {
+                var tpCam = _cameraTransform.GetComponent<RooflineRelay.CameraControl.ThirdPersonCamera>();
+                if (tpCam != null)
+                {
+                    tpCam.SnapToTarget();
+                }
+            }
+
             if (RooflineAudioManager.Instance != null)
             {
                 RooflineAudioManager.Instance.PlayLanding(transform.position);

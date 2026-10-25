@@ -56,8 +56,11 @@ namespace RooflineRelay.CameraControl
                 return;
             }
 
-            // Smooth focus point (especially on Y axis to provide natural jump elevation inside frame)
-            Vector3 rawFocusPoint = target.position + targetOffset;
+            // Dynamic upward headroom: when character ascends (jump/vault), elevate focus to prevent upper body cropping
+            float deltaY = target.position.y - (_smoothedFocusPoint.y - targetOffset.y);
+            float upwardLead = deltaY > 0.05f ? Mathf.Clamp(deltaY * 0.35f, 0f, 0.50f) : 0f;
+
+            Vector3 rawFocusPoint = target.position + targetOffset + Vector3.up * upwardLead;
             float smoothY = Mathf.SmoothDamp(_smoothedFocusPoint.y, rawFocusPoint.y, ref _focusPointVelocityY, verticalSmoothTime);
             _smoothedFocusPoint = new Vector3(rawFocusPoint.x, smoothY, rawFocusPoint.z);
 
@@ -102,8 +105,29 @@ namespace RooflineRelay.CameraControl
             desiredDistance = Mathf.Clamp(nearestValidDistance, minDistance, maxDistance);
             Vector3 finalDesiredPos = _smoothedFocusPoint + camDirection * desiredDistance;
 
+            // Enforce minimum floor clearance so camera can never pass through or get stuck beneath rooftop floor
+            finalDesiredPos.y = Mathf.Max(finalDesiredPos.y, 0.75f);
+
             transform.position = Vector3.SmoothDamp(transform.position, finalDesiredPos, ref _currentVelocity, positionSmoothTime);
             transform.LookAt(_smoothedFocusPoint);
+        }
+
+        public void SnapToTarget()
+        {
+            if (target != null)
+            {
+                _currentYaw = target.eulerAngles.y;
+                _smoothedFocusPoint = target.position + targetOffset;
+                _currentVelocity = Vector3.zero;
+                _focusPointVelocityY = 0f;
+
+                Quaternion rotation = Quaternion.Euler(_currentPitch, _currentYaw, 0f);
+                Vector3 camDirection = -(rotation * Vector3.forward);
+                Vector3 snappedPos = _smoothedFocusPoint + camDirection * distance;
+                snappedPos.y = Mathf.Max(snappedPos.y, 0.75f);
+                transform.position = snappedPos;
+                transform.LookAt(_smoothedFocusPoint);
+            }
         }
     }
 }

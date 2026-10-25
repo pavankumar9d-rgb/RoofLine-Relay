@@ -340,49 +340,63 @@ namespace RooflineRelay.Editor
             RenderSettings.ambientEquatorColor = new Color(0.18f, 0.22f, 0.26f);
             RenderSettings.ambientGroundColor = new Color(0.08f, 0.10f, 0.12f);
 
-            // Concrete Material for Roof Surfaces
-            var concreteMat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
-            concreteMat.color = new Color(0.18f, 0.20f, 0.23f);
-            concreteMat.SetFloat("_Roughness", 0.85f);
+            // Materials Architecture (Industrial Cyberpunk Aesthetic: Dark Teal, Matte Graphite, Amber & Quantum Cyan)
+            Directory.CreateDirectory("Assets/Art/Materials");
+            var matRoof = GetOrCreateMaterial("Assets/Art/Materials/M_Concrete_Roof.mat", "", "", new Color(0.16f, 0.18f, 0.20f), Color.black, 0.85f);
+            var matParapet = GetOrCreateMaterial("Assets/Art/Materials/M_Concrete_Parapet.mat", "", "", new Color(0.22f, 0.25f, 0.28f), Color.black, 0.90f);
+            var matCourier = GetOrCreateMaterial("Assets/Art/Materials/M_Courier_UrbanScout.mat", "Assets/Art/Textures/courier_urban_scout_albedo.png", "Assets/Art/Textures/courier_urban_scout_normal.png", Color.white, Color.black, 0.75f);
+            var matStairwell = GetOrCreateMaterial("Assets/Art/Materials/M_StairwellHousing.mat", "Assets/Art/Textures/stairwell_housing_albedo.png", "Assets/Art/Textures/stairwell_housing_normal.png", Color.white, Color.black, 0.80f);
+            var matHvac = GetOrCreateMaterial("Assets/Art/Materials/M_HvacChiller.mat", "Assets/Art/Textures/hvac_chiller_albedo.png", "Assets/Art/Textures/hvac_chiller_normal.png", Color.white, Color.black, 0.70f);
+            var matPipe = GetOrCreateMaterial("Assets/Art/Materials/M_PipeVault.mat", "Assets/Art/Textures/pipe_vault_albedo.png", "Assets/Art/Textures/pipe_vault_normal.png", Color.white, Color.black, 0.60f);
+            var matDuct = GetOrCreateMaterial("Assets/Art/Materials/M_VentilationDuct.mat", "Assets/Art/Textures/ventilation_duct_albedo.png", "", Color.white, Color.black, 0.65f);
+            var matCatwalk = GetOrCreateMaterial("Assets/Art/Materials/M_CatwalkBridge.mat", "Assets/Art/Textures/catwalk_bridge_albedo.png", "Assets/Art/Textures/catwalk_bridge_normal.png", Color.white, Color.black, 0.70f);
+            var matDrone = GetOrCreateMaterial("Assets/Art/Materials/M_PursuitDrone.mat", "Assets/Art/Textures/pursuit_drone_albedo.png", "Assets/Art/Textures/pursuit_drone_normal.png", Color.white, new Color(0.95f, 0.20f, 0.10f) * 2.0f, 0.50f);
+            var matCheckpoint = GetOrCreateMaterial("Assets/Art/Materials/M_CheckpointGate.mat", "Assets/Art/Textures/checkpoint_quantum_gate_albedo.png", "Assets/Art/Textures/checkpoint_quantum_gate_normal.png", Color.white, new Color(0.12f, 0.85f, 0.65f) * 1.5f, 0.60f);
+            var matBeacon = GetOrCreateMaterial("Assets/Art/Materials/M_RelayBeaconSpire.mat", "Assets/Art/Textures/relay_beacon_spire_albedo.png", "Assets/Art/Textures/relay_beacon_spire_normal.png", Color.white, new Color(1.0f, 0.68f, 0.15f) * 2.2f, 0.50f);
 
             // 2. Platform 1: Start Platform (z = -3m to 14m, width = 8m)
             var roof1 = GameObject.CreatePrimitive(PrimitiveType.Cube);
             roof1.name = "Platform_1_Rooftop_Base";
             roof1.transform.position = new Vector3(0f, -0.5f, 5.5f);
             roof1.transform.localScale = new Vector3(8.4f, 1f, 17f);
-            roof1.GetComponent<Renderer>().material = concreteMat;
+            roof1.GetComponent<Renderer>().material = matRoof;
 
             // Rooftop Stairwell Housing Access (Start Point dressing)
-            InstantiateModel(StairwellModelPath, "Stairwell_Housing_Access", new Vector3(-2.4f, 0f, 0.5f), new Vector3(1.2f, 1.2f, 1.2f), Quaternion.Euler(0, 90f, 0));
+            var stairGo = InstantiateModel(StairwellModelPath, "Stairwell_Housing_Access", new Vector3(-2.4f, 0f, 0.5f), new Vector3(1.2f, 1.2f, 1.2f), Quaternion.Euler(0, 90f, 0));
+            ApplyMaterialRecursively(stairGo, matStairwell);
 
             // Parapet Borders on Platform 1
-            InstantiateParapet(new Vector3(-4.1f, 0.15f, 5.5f), new Vector3(0.3f, 0.6f, 16.5f));
-            InstantiateParapet(new Vector3(4.1f, 0.15f, 5.5f), new Vector3(0.3f, 0.6f, 16.5f));
+            InstantiateParapet(new Vector3(-4.1f, 0.15f, 5.5f), new Vector3(0.3f, 0.6f, 16.5f), matParapet);
+            InstantiateParapet(new Vector3(4.1f, 0.15f, 5.5f), new Vector3(0.3f, 0.6f, 16.5f), matParapet);
 
             // Industrial HVAC Chiller Unit
-            InstantiateModel(HvacModelPath, "HVAC_Chiller_Unit", new Vector3(2.5f, 0f, 3.5f), new Vector3(1.1f, 1.1f, 1.1f), Quaternion.identity);
+            var hvacGo = InstantiateModel(HvacModelPath, "HVAC_Chiller_Unit", new Vector3(2.5f, 0f, 3.5f), new Vector3(1.1f, 1.1f, 1.1f), Quaternion.identity);
+            ApplyMaterialRecursively(hvacGo, matHvac);
 
-            // Real 3D Pipe Vault Obstacle (at z = 7.5m, replaces primitive orange box)
+            // Real 3D Pipe Vault Obstacle (at z = 7.5m, hurdle obstacle)
             var pipeGo = InstantiateModel(PipeVaultModelPath, "Industrial_Pipe_Vault_Obstacle", new Vector3(0f, 0f, 7.5f), new Vector3(1.8f, 1.4f, 1.2f), Quaternion.Euler(0, 90f, 0));
             if (pipeGo != null)
             {
                 var pipeCol = pipeGo.AddComponent<BoxCollider>();
                 pipeCol.size = new Vector3(2.2f, 0.85f, 0.6f);
                 pipeCol.center = new Vector3(0f, 0.45f, 0f);
+                ApplyMaterialRecursively(pipeGo, matPipe);
             }
 
-            // Real 3D Ventilation Duct Run (Overhead slide obstacle at z = 11.5m, replaces red duct box)
+            // Real 3D Ventilation Duct Run (Overhead slide obstacle at z = 11.5m)
             var ductGo = InstantiateModel(VentDuctModelPath, "Ventilation_Duct_Run_Slide_Obstacle", new Vector3(0f, 1.55f, 11.5f), new Vector3(1.6f, 1.1f, 1.1f), Quaternion.Euler(0, 90f, 0));
             if (ductGo != null)
             {
                 var ductCol = ductGo.AddComponent<BoxCollider>();
                 ductCol.size = new Vector3(5.5f, 0.8f, 1.2f);
                 ductCol.center = new Vector3(0f, 0f, 0f);
+                ApplyMaterialRecursively(ductGo, matDuct);
             }
 
             // 3. The Chasm Gap (z = 14m to 18m, 4m jump)
             // Catwalk Bridge module on the side
-            InstantiateModel(CatwalkModelPath, "Industrial_Catwalk_Bridge_Flank", new Vector3(3.2f, -0.2f, 16.0f), new Vector3(1.4f, 1.2f, 3.8f), Quaternion.identity);
+            var catwalkGo = InstantiateModel(CatwalkModelPath, "Industrial_Catwalk_Bridge_Flank", new Vector3(3.2f, -0.2f, 16.0f), new Vector3(1.4f, 1.2f, 3.8f), Quaternion.identity);
+            ApplyMaterialRecursively(catwalkGo, matCatwalk);
 
             // Pursuit Drone Sentinel Hazard (Patrolling across the gap at z = 16.0m)
             var dronePrefab = AssetDatabase.LoadAssetAtPath<GameObject>(DroneModelPath);
@@ -390,6 +404,7 @@ namespace RooflineRelay.Editor
             droneGo.name = "Security_Pursuit_Drone_Sentinel";
             droneGo.transform.position = new Vector3(0f, 3.4f, 16.0f);
             droneGo.transform.localScale = Vector3.one * 0.75f;
+            ApplyMaterialRecursively(droneGo, matDrone);
 
             var droneSentinel = droneGo.AddComponent<PursuitDroneSentinel>();
             droneSentinel.patrolPointA = new Vector3(-3.2f, 3.4f, 16.0f);
@@ -401,12 +416,12 @@ namespace RooflineRelay.Editor
             roof2.name = "Platform_2_Rooftop_Target";
             roof2.transform.position = new Vector3(0f, -0.5f, 25.0f);
             roof2.transform.localScale = new Vector3(8.4f, 1f, 14f);
-            roof2.GetComponent<Renderer>().material = concreteMat;
+            roof2.GetComponent<Renderer>().material = matRoof;
 
-            InstantiateParapet(new Vector3(-4.1f, 0.15f, 25.0f), new Vector3(0.3f, 0.6f, 14f));
-            InstantiateParapet(new Vector3(4.1f, 0.15f, 25.0f), new Vector3(0.3f, 0.6f, 14f));
+            InstantiateParapet(new Vector3(-4.1f, 0.15f, 25.0f), new Vector3(0.3f, 0.6f, 14f), matParapet);
+            InstantiateParapet(new Vector3(4.1f, 0.15f, 25.0f), new Vector3(0.3f, 0.6f, 14f), matParapet);
 
-            // Real 3D Quantum Checkpoint Gate (at z = 21.0m, replaces primitive green sticks)
+            // Real 3D Quantum Checkpoint Gate (at z = 21.0m)
             var cpGo = InstantiateModel(CheckpointModelPath, "Checkpoint_Quantum_Gate", new Vector3(0f, 0f, 21.0f), new Vector3(1.6f, 1.6f, 1.6f), Quaternion.identity);
             if (cpGo != null)
             {
@@ -415,6 +430,7 @@ namespace RooflineRelay.Editor
                 cpCol.size = new Vector3(3.5f, 3.0f, 1.2f);
                 cpCol.center = new Vector3(0f, 1.5f, 0f);
                 cpGo.AddComponent<RooftopCheckpoint>();
+                ApplyMaterialRecursively(cpGo, matCheckpoint);
             }
 
             // 5. Platform 3: Mission Objective Platform (z = 34m to 46m, width = 8m)
@@ -422,12 +438,12 @@ namespace RooflineRelay.Editor
             roof3.name = "Platform_3_Objective_Spire_Platform";
             roof3.transform.position = new Vector3(0f, -0.5f, 40.0f);
             roof3.transform.localScale = new Vector3(8.4f, 1f, 12f);
-            roof3.GetComponent<Renderer>().material = concreteMat;
+            roof3.GetComponent<Renderer>().material = matRoof;
 
-            InstantiateParapet(new Vector3(-4.1f, 0.15f, 40.0f), new Vector3(0.3f, 0.6f, 12f));
-            InstantiateParapet(new Vector3(4.1f, 0.15f, 40.0f), new Vector3(0.3f, 0.6f, 12f));
+            InstantiateParapet(new Vector3(-4.1f, 0.15f, 40.0f), new Vector3(0.3f, 0.6f, 12f), matParapet);
+            InstantiateParapet(new Vector3(4.1f, 0.15f, 40.0f), new Vector3(0.3f, 0.6f, 12f), matParapet);
 
-            // Real 3D Signature Relay Beacon Spire (at z = 41.5m, replaces primitive cyan cylinder)
+            // Real 3D Signature Relay Beacon Spire (at z = 41.5m)
             var beaconGo = InstantiateModel(BeaconModelPath, "Signature_Relay_Beacon_Spire", new Vector3(0f, 0f, 41.5f), new Vector3(1.5f, 1.5f, 1.5f), Quaternion.identity);
             if (beaconGo != null)
             {
@@ -436,6 +452,7 @@ namespace RooflineRelay.Editor
                 beaconCol.radius = 2.4f;
                 beaconCol.center = new Vector3(0f, 1.5f, 0f);
                 beaconGo.AddComponent<RooftopObjective>();
+                ApplyMaterialRecursively(beaconGo, matBeacon);
             }
 
             // 6. Audio Manager Setup
@@ -463,6 +480,7 @@ namespace RooflineRelay.Editor
             playerGo.name = "Courier_Urban_Scout";
             playerGo.transform.position = new Vector3(0f, 0.1f, -1.0f);
             playerGo.transform.rotation = Quaternion.identity;
+            ApplyMaterialRecursively(playerGo, matCourier);
 
             var anim = playerGo.GetComponent<Animator>();
             if (anim == null) anim = playerGo.AddComponent<Animator>();
@@ -489,7 +507,7 @@ namespace RooflineRelay.Editor
             var tpCam = camGo.AddComponent<ThirdPersonCamera>();
             tpCam.target = playerGo.transform;
             tpCam.distance = 5.2f;
-            tpCam.targetOffset = new Vector3(0f, 1.35f, 0f);
+            tpCam.targetOffset = new Vector3(0f, 1.55f, 0f);
             tpCam.cameraRadius = 0.28f;
 
             EditorSceneManager.SaveScene(scene, ProductionScenePath);
@@ -541,17 +559,74 @@ namespace RooflineRelay.Editor
             return instance;
         }
 
-        private static void InstantiateParapet(Vector3 pos, Vector3 scale)
+        private static void InstantiateParapet(Vector3 pos, Vector3 scale, Material mat)
         {
             var parapet = GameObject.CreatePrimitive(PrimitiveType.Cube);
             parapet.name = "Concrete_Parapet_Edge";
             parapet.transform.position = pos;
             parapet.transform.localScale = scale;
+            if (mat != null)
+            {
+                parapet.GetComponent<Renderer>().material = mat;
+            }
+        }
 
-            var mat = new Material(Shader.Find("Universal Render Pipeline/Lit"));
-            mat.color = new Color(0.22f, 0.25f, 0.28f);
-            mat.SetFloat("_Roughness", 0.9f);
-            parapet.GetComponent<Renderer>().material = mat;
+        private static Material GetOrCreateMaterial(string matPath, string albedoTexPath, string normalTexPath, Color baseColor, Color emissionColor, float roughness = 0.8f)
+        {
+            var mat = AssetDatabase.LoadAssetAtPath<Material>(matPath);
+            if (mat == null)
+            {
+                var shader = Shader.Find("Universal Render Pipeline/Lit");
+                mat = new Material(shader);
+                Directory.CreateDirectory(Path.GetDirectoryName(matPath));
+                AssetDatabase.CreateAsset(mat, matPath);
+            }
+
+            mat.color = baseColor;
+            if (!string.IsNullOrEmpty(albedoTexPath))
+            {
+                var tex = AssetDatabase.LoadAssetAtPath<Texture2D>(albedoTexPath);
+                if (tex != null)
+                {
+                    mat.SetTexture("_BaseMap", tex);
+                }
+            }
+
+            if (!string.IsNullOrEmpty(normalTexPath))
+            {
+                var normalTex = AssetDatabase.LoadAssetAtPath<Texture2D>(normalTexPath);
+                if (normalTex != null)
+                {
+                    mat.SetTexture("_BumpMap", normalTex);
+                    mat.EnableKeyword("_NORMALMAP");
+                }
+            }
+
+            mat.SetFloat("_Smoothness", 1.0f - roughness);
+
+            if (emissionColor != Color.black)
+            {
+                mat.SetColor("_EmissionColor", emissionColor);
+                mat.EnableKeyword("_EMISSION");
+            }
+
+            EditorUtility.SetDirty(mat);
+            return mat;
+        }
+
+        private static void ApplyMaterialRecursively(GameObject go, Material mat)
+        {
+            if (go == null || mat == null) return;
+            var renderers = go.GetComponentsInChildren<Renderer>(true);
+            foreach (var r in renderers)
+            {
+                var mats = new Material[r.sharedMaterials.Length];
+                for (int i = 0; i < mats.Length; i++)
+                {
+                    mats[i] = mat;
+                }
+                r.sharedMaterials = mats;
+            }
         }
 
         [MenuItem("Roofline Relay/Validate Production Scene")]
