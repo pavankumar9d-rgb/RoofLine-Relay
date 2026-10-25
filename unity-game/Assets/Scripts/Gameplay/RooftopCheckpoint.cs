@@ -19,11 +19,25 @@ namespace RooflineRelay.Gameplay
                 isTriggered = true;
                 player.SetCheckpoint(transform.position);
 
-                // Emissive color feedback
-                var renderer = GetComponentInChildren<Renderer>();
-                if (renderer != null && renderer.material != null)
+                // Audio feedback
+                if (RooflineRelay.Audio.RooflineAudioManager.Instance != null)
                 {
-                    renderer.material.color = activeColor;
+                    RooflineRelay.Audio.RooflineAudioManager.Instance.PlayCheckpoint(transform.position);
+                }
+
+                // Emissive color feedback across all child meshes
+                var renderers = GetComponentsInChildren<Renderer>();
+                foreach (var r in renderers)
+                {
+                    if (r != null && r.material != null)
+                    {
+                        r.material.color = activeColor;
+                        if (r.material.HasProperty("_EmissionColor"))
+                        {
+                            r.material.SetColor("_EmissionColor", activeColor * 2.0f);
+                            r.material.EnableKeyword("_EMISSION");
+                        }
+                    }
                 }
 
                 Debug.Log($"[RooftopCheckpoint] Checkpoint activated by player at {transform.position}");

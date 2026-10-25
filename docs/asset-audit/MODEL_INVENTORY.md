@@ -57,6 +57,15 @@ A comprehensive audit and structural reorganization of all downloaded and conver
 | `AUDIT_MDL_42` | `props/industrial/modular_industrial_utility_crate.glb` | props/industrial | 249,244 | 1.900m x 1.893m x 1.716m | Staged | Decimate to 1.8k tris, box collider, stackable snapping bounds |
 | `AUDIT_MDL_43` | `props/industrial/modular_safety_railing_barrier.glb` | props/industrial | 60,280 | 1.899m x 0.277m x 0.923m | Staged | Decimate to 2k tris, perimeter barrier collider, parkour vault edge |
 | `AUDIT_MDL_44` | `props/industrial/rooftop_warning_beacon_light.glb` | props/industrial | 1,499,084 | 1.189m x 1.405m x 1.991m | Staged | Decimate to 3k tris, amber emissive point-light source node |
+| `AUDIT_MDL_45` | `characters/enemies/security_pursuit_drone_sentinel_lod.glb` | characters/enemies | 18,163 | 1.250m x 1.450m x 0.850m | Verified LOD | Decimated 95% from 363k tris to 18.1k tris; 6.16MB for mobile & Intel UHD |
+| `AUDIT_MDL_46` | `environment/parkour-obstacles/pipe_vault_obstacle_lod.glb` | environment/parkour-obstacles | 5,525 | 1.901m x 0.955m x 0.614m | Verified LOD | Decimated from 138k to 5.5k polygons for hurdle vault gameplay |
+| `AUDIT_MDL_47` | `props/industrial/ventilation_duct_run_lod.glb` | props/industrial | 14,994 | 1.993m x 0.524m x 0.856m | Verified LOD | Decimated 99% from 1.5M to 15k polygons for overhead running slide |
+| `AUDIT_MDL_48` | `props/gameplay/checkpoint_quantum_gate_lod.glb` | props/gameplay | 6,294 | 0.951m x 0.831m x 1.901m | Verified LOD | Decimated from 104k to 6.3k polygons for quantum checkpoint trigger |
+| `AUDIT_MDL_49` | `props/gameplay/relay_beacon_spire_lod.glb` | props/gameplay | 8,399 | 0.942m x 0.942m x 1.900m | Verified LOD | Decimated from 209k to 8.4k polygons for mission objective landmark |
+| `AUDIT_MDL_50` | `environment/rooftop-modules/stairwell_housing_lod.glb` | environment/rooftop-modules | 7,018 | 1.900m x 1.107m x 1.558m | Verified LOD | Decimated from 175k to 7k polygons for start platform cabin |
+| `AUDIT_MDL_51` | `environment/parkour-obstacles/catwalk_bridge_lod.glb` | environment/parkour-obstacles | 10,267 | 1.000m x 0.343m x 0.303m | Verified LOD | Decimated from 342k to 10k polygons for chasm gap crossing |
+| `AUDIT_MDL_52` | `props/industrial/hvac_chiller_lod.glb` | props/industrial | 9,390 | 1.899m x 1.874m x 1.265m | Verified LOD | Decimated from 469k to 9.4k polygons for industrial prop dressing |
+| `AUDIT_MDL_53` | `environment/parkour-obstacles/parapet_block_lod.glb` | environment/parkour-obstacles | 5,017 | 1.000m x 0.334m x 0.631m | Verified LOD | Decimated from 501k to 5k polygons for modular roof edge parapets |
 
 ---
 

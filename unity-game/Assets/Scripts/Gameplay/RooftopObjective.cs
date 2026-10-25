@@ -26,10 +26,25 @@ namespace RooflineRelay.Gameplay
                 isCompleted = true;
                 player.CompleteObjective();
 
-                var renderer = GetComponentInChildren<Renderer>();
-                if (renderer != null && renderer.material != null)
+                // Audio feedback
+                if (RooflineRelay.Audio.RooflineAudioManager.Instance != null)
                 {
-                    renderer.material.color = completeColor;
+                    RooflineRelay.Audio.RooflineAudioManager.Instance.PlayObjective(transform.position);
+                }
+
+                // Emissive color feedback across all child meshes
+                var renderers = GetComponentsInChildren<Renderer>();
+                foreach (var r in renderers)
+                {
+                    if (r != null && r.material != null)
+                    {
+                        r.material.color = completeColor;
+                        if (r.material.HasProperty("_EmissionColor"))
+                        {
+                            r.material.SetColor("_EmissionColor", completeColor * 2.5f);
+                            r.material.EnableKeyword("_EMISSION");
+                        }
+                    }
                 }
 
                 Debug.Log("[RooftopObjective] SIGNATURE RELAY BEACON REACHED! MISSION SUCCESS!");

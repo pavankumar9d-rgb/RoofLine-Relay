@@ -113,3 +113,23 @@ __pycache__/
 # ------------------------------------------------------------------------------
 [Tt]emp/
 [Tt]mp/
+scratch/
+*.log
+
+# ------------------------------------------------------------------------------
+# Test-Only Scenes, Test Harnesses & Development Video Captures
+# ------------------------------------------------------------------------------
+unity-game/Assets/Scenes/CharacterAnimationTest.unity
+unity-game/Assets/Scenes/CharacterAnimationTest.unity.meta
+unity-game/Assets/Scripts/Character/CharacterAnimationTestHarness.cs
+unity-game/Assets/Scripts/Character/CharacterAnimationTestHarness.cs.meta
+docs/demo/*.mp4
+*.mp4
+
+# Intermediate decimation GLB files in unity-game superseded by native Unity FBX
+unity-game/Assets/Art/Characters/*_lod.glb
+unity-game/Assets/Art/Characters/*_lod.glb.meta
+unity-game/Assets/Art/Environment/*_lod.glb
+unity-game/Assets/Art/Environment/*_lod.glb.meta
+unity-game/Assets/Art/Props/*_lod.glb
+unity-game/Assets/Art/Props/*_lod.glb.meta

@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using RooflineRelay.Audio;
 
 namespace RooflineRelay.Character
 {
@@ -25,6 +26,11 @@ namespace RooflineRelay.Character
         public float vaultDuration = 0.65f;
         public LayerMask obstacleLayer = ~0;
 
+        [Header("Parkour Polish: Slide & Roll")]
+        public float slideSpeed = 7.5f;
+        public float slideDuration = 0.75f;
+        public float rollDuration = 0.85f;
+
         [Header("Respawn & Boundaries")]
         public float killY = -8.0f;
         public Vector3 spawnPoint = new Vector3(0f, 0.5f, 0f);
@@ -33,6 +39,7 @@ namespace RooflineRelay.Character
         public bool enableMobileTouch = true;
         public Vector2 mobileMoveInput = Vector2.zero;
         public bool mobileSprint = false;
+        public bool mobileSlide = false;
 
         // Components
         private CharacterController _characterController;
@@ -44,7 +51,10 @@ namespace RooflineRelay.Character
         private float _currentSpeed = 0f;
         private bool _isGrounded;
         private bool _isVaulting = false;
+        private bool _isSliding = false;
+        private bool _isRolling = false;
         private float _airTime = 0f;
+        private float _footstepTimer = 0f;
 
         // Checkpoint System
         private Vector3 _lastCheckpoint;
@@ -57,6 +67,8 @@ namespace RooflineRelay.Character
         private static readonly int JumpParam = Animator.StringToHash("Jump");
         private static readonly int FallingParam = Animator.StringToHash("Falling");
         private static readonly int VaultParam = Animator.StringToHash("Vault");
+        private static readonly int SlideParam = Animator.StringToHash("Slide");
+        private static readonly int RollParam = Animator.StringToHash("Roll");
         private static readonly int HardLandingParam = Animator.StringToHash("HardLanding");
 
         private void Awake()
@@ -98,9 +110,16 @@ namespace RooflineRelay.Character
             }
 
             CheckGrounded();
-            HandleMovement();
-            HandleJumpAndGravity();
-            CheckVaultObstacle();
+
+            if (!_isSliding)
+            {
+                HandleMovement();
+                HandleJumpAndGravity();
+                CheckVaultObstacle();
+                CheckSlideInput();
+            }
+
+            UpdateFootstepAudio();
             UpdateAnimator();
         }
 
@@ -112,14 +131,28 @@ namespace RooflineRelay.Character
             {
                 if (_velocity.y < 0f)
                 {
-                    // Small negative force to keep grounded on slopes
                     _velocity.y = -2.0f;
                 }
 
-                if (_airTime > 0.45f)
+                if (_airTime > 0.40f)
                 {
-                    // Trigger landing on solid contact after significant fall
-                    _animator.SetTrigger(HardLandingParam);
+                    // If moving forward upon landing, fluidly roll!
+                    float h = Input.GetAxisRaw("Horizontal");
+                    float v = Input.GetAxisRaw("Vertical");
+                    bool hasForwardInput = (new Vector2(h, v).magnitude > 0.3f) || (mobileMoveInput.magnitude > 0.3f);
+
+                    if (hasForwardInput && !_isRolling)
+                    {
+                        StartCoroutine(PerformRollRoutine());
+                    }
+                    else
+                    {
+                        _animator.SetTrigger(HardLandingParam);
+                        if (RooflineAudioManager.Instance != null)
+                        {
+                            RooflineAudioManager.Instance.PlayLanding(transform.position);
+                        }
+                    }
                 }
 
                 _airTime = 0f;
@@ -132,7 +165,6 @@ namespace RooflineRelay.Character
 
         private void HandleMovement()
         {
-            // Gather Input: Desktop Keyboard + Mobile Touch
             float h = Input.GetAxisRaw("Horizontal");
             float v = Input.GetAxisRaw("Vertical");
 
@@ -146,7 +178,6 @@ namespace RooflineRelay.Character
 
             if (inputDir.magnitude > 0.1f)
             {
-                // Align direction relative to camera
                 Vector3 camForward = _cameraTransform != null ? _cameraTransform.forward : Vector3.forward;
                 Vector3 camRight = _cameraTransform != null ? _cameraTransform.right : Vector3.right;
                 camForward.y = 0f;
@@ -156,7 +187,6 @@ namespace RooflineRelay.Character
 
                 Vector3 targetMoveDir = (camForward * inputDir.z + camRight * inputDir.x).normalized;
 
-                // Determine target speed
                 bool isSprinting = Input.GetKey(KeyCode.LeftShift) || mobileSprint;
                 float targetSpeed = isSprinting ? sprintSpeed : runSpeed;
                 if (inputDir.magnitude < 0.5f)
@@ -166,11 +196,9 @@ namespace RooflineRelay.Character
 
                 _currentSpeed = Mathf.Lerp(_currentSpeed, targetSpeed, Time.deltaTime * 10f);
 
-                // Smooth Rotation
                 Quaternion targetRot = Quaternion.LookRotation(targetMoveDir);
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * rotationSpeed);
 
-                // Apply Horizontal Movement
                 _characterController.Move(targetMoveDir * (_currentSpeed * Time.deltaTime));
             }
             else
@@ -181,7 +209,6 @@ namespace RooflineRelay.Character
 
         private void HandleJumpAndGravity()
         {
-            // Jump Trigger
             bool jumpRequested = Input.GetButtonDown("Jump") || Input.GetKeyDown(KeyCode.Space);
 
             if (jumpRequested && _isGrounded)
@@ -189,16 +216,19 @@ namespace RooflineRelay.Character
                 _velocity.y = jumpForce;
                 _animator.SetTrigger(JumpParam);
                 _isGrounded = false;
+
+                if (RooflineAudioManager.Instance != null)
+                {
+                    RooflineAudioManager.Instance.PlayJump(transform.position);
+                }
             }
 
-            // Apply Gravity
             _velocity.y += gravity * Time.deltaTime;
             _characterController.Move(_velocity * Time.deltaTime);
         }
 
         private void CheckVaultObstacle()
         {
-            // Only check vault when running forward
             if (_currentSpeed < walkSpeed || !_isGrounded)
             {
                 return;
@@ -207,17 +237,99 @@ namespace RooflineRelay.Character
             Vector3 origin = transform.position + Vector3.up * 0.4f;
             Vector3 forward = transform.forward;
 
-            // Raycast 1: Knee height
             if (Physics.Raycast(origin, forward, out RaycastHit lowHit, vaultDistance, obstacleLayer))
             {
-                // Raycast 2: Head/Chest height (Must be clear for vault)
                 Vector3 highOrigin = transform.position + Vector3.up * 1.5f;
                 if (!Physics.Raycast(highOrigin, forward, vaultDistance, obstacleLayer))
                 {
-                    // Obstacle is vaultable!
                     StartCoroutine(PerformVaultRoutine(lowHit.point));
                 }
             }
+        }
+
+        private void CheckSlideInput()
+        {
+            bool slideRequested = Input.GetKeyDown(KeyCode.C) || Input.GetKeyDown(KeyCode.LeftControl) || mobileSlide;
+            mobileSlide = false;
+
+            if (slideRequested && _isGrounded && _currentSpeed > 3.0f && !_isSliding)
+            {
+                StartCoroutine(PerformSlideRoutine());
+            }
+        }
+
+        private IEnumerator PerformSlideRoutine()
+        {
+            _isSliding = true;
+            _animator.SetTrigger(SlideParam);
+
+            if (RooflineAudioManager.Instance != null)
+            {
+                RooflineAudioManager.Instance.PlaySlide(transform.position);
+            }
+
+            // Lower capsule height for low hurdle clearance
+            _characterController.height = 0.85f;
+            _characterController.center = new Vector3(0f, 0.425f, 0f);
+
+            float elapsed = 0f;
+            Vector3 slideDir = transform.forward;
+            float initialSpeed = Mathf.Max(_currentSpeed, slideSpeed);
+
+            while (elapsed < slideDuration)
+            {
+                elapsed += Time.deltaTime;
+                float t = elapsed / slideDuration;
+
+                // Friction deceleration
+                float currentSlideSpeed = Mathf.Lerp(initialSpeed, walkSpeed * 0.5f, t);
+                _characterController.Move(slideDir * (currentSlideSpeed * Time.deltaTime));
+
+                // Apply gravity while sliding
+                _velocity.y += gravity * Time.deltaTime;
+                _characterController.Move(_velocity * Time.deltaTime);
+
+                yield return null;
+            }
+
+            // Headroom check before standing
+            while (Physics.Raycast(transform.position + Vector3.up * 0.5f, Vector3.up, 1.4f, obstacleLayer))
+            {
+                _characterController.Move(slideDir * (walkSpeed * Time.deltaTime));
+                yield return null;
+            }
+
+            // Restore capsule height
+            _characterController.height = 1.8f;
+            _characterController.center = new Vector3(0f, 0.9f, 0f);
+            _isSliding = false;
+        }
+
+        private IEnumerator PerformRollRoutine()
+        {
+            _isRolling = true;
+            _animator.SetTrigger(RollParam);
+
+            if (RooflineAudioManager.Instance != null)
+            {
+                RooflineAudioManager.Instance.PlayRoll(transform.position);
+            }
+
+            float elapsed = 0f;
+            Vector3 rollDir = transform.forward;
+
+            while (elapsed < rollDuration)
+            {
+                elapsed += Time.deltaTime;
+                _characterController.Move(rollDir * (runSpeed * 0.8f * Time.deltaTime));
+
+                _velocity.y = -2.0f;
+                _characterController.Move(_velocity * Time.deltaTime);
+
+                yield return null;
+            }
+
+            _isRolling = false;
         }
 
         private IEnumerator PerformVaultRoutine(Vector3 obstaclePoint)
@@ -225,9 +337,16 @@ namespace RooflineRelay.Character
             _isVaulting = true;
             _animator.SetTrigger(VaultParam);
 
+            if (RooflineAudioManager.Instance != null)
+            {
+                RooflineAudioManager.Instance.PlayVault(transform.position);
+            }
+
             Vector3 startPos = transform.position;
             Vector3 targetPos = obstaclePoint + transform.forward * 1.5f;
-            targetPos.y = startPos.y; // Keep level ground height
+            targetPos.y = startPos.y;
+
+            _characterController.enabled = false;
 
             float elapsed = 0f;
             while (elapsed < vaultDuration)
@@ -235,19 +354,38 @@ namespace RooflineRelay.Character
                 elapsed += Time.deltaTime;
                 float t = Mathf.Clamp01(elapsed / vaultDuration);
 
-                // Arc movement over hurdle
                 Vector3 currentPos = Vector3.Lerp(startPos, targetPos, t);
                 float arc = Mathf.Sin(t * Mathf.PI) * 0.5f;
                 currentPos.y += arc;
 
-                _characterController.enabled = false;
                 transform.position = currentPos;
-                _characterController.enabled = true;
-
                 yield return null;
             }
 
+            transform.position = targetPos;
+            _characterController.enabled = true;
             _isVaulting = false;
+        }
+
+        private void UpdateFootstepAudio()
+        {
+            if (!_isGrounded || _isVaulting || _isSliding || _currentSpeed < 0.3f)
+            {
+                _footstepTimer = 0f;
+                return;
+            }
+
+            _footstepTimer += Time.deltaTime;
+            float stepInterval = _currentSpeed > 6.0f ? 0.28f : (_currentSpeed > 3.0f ? 0.38f : 0.52f);
+
+            if (_footstepTimer >= stepInterval)
+            {
+                _footstepTimer = 0f;
+                if (RooflineAudioManager.Instance != null)
+                {
+                    RooflineAudioManager.Instance.PlayFootstep(transform.position);
+                }
+            }
         }
 
         private void UpdateAnimator()
@@ -272,47 +410,61 @@ namespace RooflineRelay.Character
 
         public void RespawnAtCheckpoint()
         {
-            Debug.Log($"[ParkourController] Player fell out of bounds. Respawning at {_lastCheckpoint}");
+            Debug.Log($"[ParkourController] Player fell out of bounds or caught by sentinel. Respawning at {_lastCheckpoint}");
             _characterController.enabled = false;
             transform.position = _lastCheckpoint + Vector3.up * 0.5f;
             _velocity = Vector3.zero;
+            _currentSpeed = 0f;
             _characterController.enabled = true;
             _animator.SetTrigger(HardLandingParam);
+
+            if (RooflineAudioManager.Instance != null)
+            {
+                RooflineAudioManager.Instance.PlayLanding(transform.position);
+            }
         }
 
-        // GUI for Desktop & Touch Controls
         private void OnGUI()
         {
             // Top HUD
-            GUI.Box(new Rect(Screen.width / 2f - 180, 10, 360, 48), "");
-            GUI.Label(new Rect(Screen.width / 2f - 170, 14, 340, 24), $"<b>ROOFLINE RELAY — PROTOTYPE</b> | Speed: {_currentSpeed:F1} m/s");
+            GUI.Box(new Rect(Screen.width / 2f - 200, 10, 400, 50), "");
+            GUI.Label(new Rect(Screen.width / 2f - 190, 14, 380, 24), $"<b>ROOFLINE RELAY — PROTOTYPE</b> | Speed: {_currentSpeed:F1} m/s");
             string status = _objectiveCompleted ? "<color=#00ff88>OBJECTIVE COMPLETE!</color>" : $"Checkpoints: {_checkpointsReached}/1";
-            GUI.Label(new Rect(Screen.width / 2f - 170, 32, 340, 24), $"Status: {status} | Grounded: {_isGrounded}");
+            GUI.Label(new Rect(Screen.width / 2f - 190, 32, 380, 24), $"Status: {status} | Grounded: {_isGrounded} | State: {(_isSliding ? "SLIDE" : (_isRolling ? "ROLL" : (_isVaulting ? "VAULT" : "RUN")))}");
 
             // Mobile Touch Controls Overlay
             if (enableMobileTouch)
             {
-                // Left Virtual D-Pad / Buttons
+                // Left Virtual D-Pad
                 float leftY = Screen.height - 150;
-                if (GUI.RepeatButton(new Rect(30, leftY - 45, 60, 40), "▲ Forward")) mobileMoveInput = new Vector2(0, 1);
-                else if (GUI.RepeatButton(new Rect(30, leftY + 45, 60, 40), "▼ Back")) mobileMoveInput = new Vector2(0, -1);
+                if (GUI.RepeatButton(new Rect(30, leftY - 45, 60, 40), "▲ Up")) mobileMoveInput = new Vector2(0, 1);
+                else if (GUI.RepeatButton(new Rect(30, leftY + 45, 60, 40), "▼ Down")) mobileMoveInput = new Vector2(0, -1);
                 else if (GUI.RepeatButton(new Rect(5, leftY, 50, 40), "◀ Left")) mobileMoveInput = new Vector2(-1, 0);
                 else if (GUI.RepeatButton(new Rect(65, leftY, 50, 40), "▶ Right")) mobileMoveInput = new Vector2(1, 0);
                 else mobileMoveInput = Vector2.zero;
 
-                // Right Jump & Sprint Touch Buttons
-                float rightX = Screen.width - 130;
+                // Right Jump, Sprint, Slide Touch Buttons
+                float rightX = Screen.width - 200;
                 float rightY = Screen.height - 140;
 
-                mobileSprint = GUI.RepeatButton(new Rect(rightX - 70, rightY + 30, 60, 60), "Sprint");
+                mobileSprint = GUI.RepeatButton(new Rect(rightX, rightY + 30, 60, 50), "Sprint");
 
-                if (GUI.Button(new Rect(rightX, rightY, 70, 70), "JUMP"))
+                if (GUI.Button(new Rect(rightX + 65, rightY + 30, 55, 50), "Slide"))
+                {
+                    mobileSlide = true;
+                }
+
+                if (GUI.Button(new Rect(rightX + 125, rightY, 65, 80), "JUMP"))
                 {
                     if (_isGrounded)
                     {
                         _velocity.y = jumpForce;
                         _animator.SetTrigger(JumpParam);
                         _isGrounded = false;
+                        if (RooflineAudioManager.Instance != null)
+                        {
+                            RooflineAudioManager.Instance.PlayJump(transform.position);
+                        }
                     }
                 }
             }
